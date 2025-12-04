@@ -59,3 +59,17 @@ export function calculateItemDiscountRate(
   return Math.round((1 - itemTotal / originalPrice) * 100);
 }
 
+/**
+ * 상품의 최대 할인율을 계산합니다 (UI 표시용)
+ * @param discounts - 상품의 할인 정책 배열
+ * @returns 최대 할인율 (0~100)
+ */
+export function getMaxProductDiscountRate(
+  discounts: Array<{ quantity: number; rate: number }>
+): number {
+  if (discounts.length === 0) return 0;
+  const maxRate = Math.max(...discounts.map((d) => d.rate));
+  return Math.round(maxRate * 100);
+}
+
+

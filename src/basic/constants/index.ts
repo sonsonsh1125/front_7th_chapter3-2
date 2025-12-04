@@ -59,3 +59,4 @@ export const initialCoupons: Coupon[] = [
     discountValue: 10,
   },
 ];
+

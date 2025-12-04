@@ -2,6 +2,7 @@ interface CheckoutSummaryProps {
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
+    discountAmount: number;
   };
   onCheckout: () => void;
 }
@@ -20,11 +21,11 @@ export const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
             {totals.totalBeforeDiscount.toLocaleString()}원
           </span>
         </div>
-        {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
+        {totals.discountAmount > 0 && (
           <div className="flex justify-between text-red-500">
             <span>할인 금액</span>
             <span>
-              -{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}원
+              -{totals.discountAmount.toLocaleString()}원
             </span>
           </div>
         )}

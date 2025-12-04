@@ -5,7 +5,7 @@ import { calculateItemTotal } from "./discount";
  * 장바구니의 총 금액을 계산합니다
  * @param cart - 장바구니 아이템 목록
  * @param selectedCoupon - 선택된 쿠폰
- * @returns 할인 전/후 금액 객체
+ * @returns 할인 전/후 금액 및 할인 금액 객체
  */
 export function calculateCartTotal(
   cart: CartItem[],
@@ -13,6 +13,7 @@ export function calculateCartTotal(
 ): {
   totalBeforeDiscount: number;
   totalAfterDiscount: number;
+  discountAmount: number;
 } {
   let totalBeforeDiscount = 0;
   let totalAfterDiscount = 0;
@@ -37,9 +38,14 @@ export function calculateCartTotal(
     }
   }
 
+  const roundedTotalBefore = Math.round(totalBeforeDiscount);
+  const roundedTotalAfter = Math.round(totalAfterDiscount);
+  const discountAmount = roundedTotalBefore - roundedTotalAfter;
+
   return {
-    totalBeforeDiscount: Math.round(totalBeforeDiscount),
-    totalAfterDiscount: Math.round(totalAfterDiscount),
+    totalBeforeDiscount: roundedTotalBefore,
+    totalAfterDiscount: roundedTotalAfter,
+    discountAmount,
   };
 }
 

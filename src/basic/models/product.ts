@@ -72,3 +72,4 @@ export function removeProduct(
   return products.filter((p) => p.id !== productId);
 }
 
+

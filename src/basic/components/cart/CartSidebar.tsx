@@ -11,6 +11,7 @@ interface CartSidebarProps {
   totals: {
     totalBeforeDiscount: number;
     totalAfterDiscount: number;
+    discountAmount: number;
   };
   onRemove: (productId: string) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;

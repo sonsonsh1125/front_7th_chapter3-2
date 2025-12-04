@@ -1,5 +1,6 @@
 import { Product } from "../../../types";
 import { ImageIcon } from "../icons";
+import { getMaxProductDiscountRate } from "../../models/discount";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -33,7 +34,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
         {product.discounts.length > 0 && (
           <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-            ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
+            ~{getMaxProductDiscountRate(product.discounts)}%
           </span>
         )}
       </div>
