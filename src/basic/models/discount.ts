@@ -42,3 +42,19 @@ export function calculateItemTotal(item: CartItem, cart: CartItem[]): number {
 
   return Math.round(price * quantity * (1 - discount));
 }
+
+/**
+ * 개별 아이템의 할인율을 계산합니다
+ * @param item - 장바구니 아이템
+ * @param cart - 전체 장바구니
+ * @returns 할인율 (0~100)
+ */
+export function calculateItemDiscountRate(
+  item: CartItem,
+  cart: CartItem[]
+): number {
+  const itemTotal = calculateItemTotal(item, cart);
+  const originalPrice = item.product.price * item.quantity;
+  if (itemTotal >= originalPrice) return 0;
+  return Math.round((1 - itemTotal / originalPrice) * 100);
+}

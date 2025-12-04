@@ -23,16 +23,19 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
   const {
     cart,
     selectedCoupon,
-    totals,
+    calculateTotal,
     getItemTotal,
     getItemDiscountRate,
     getRemainingStock,
-    handleAddToCart,
-    handleRemoveFromCart,
-    handleUpdateQuantity,
-    handleApplyCoupon,
-    handleCheckout,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    applyCoupon,
+    clearCart,
   } = useCart(products, addNotification);
+
+  // 총액 계산
+  const totals = calculateTotal();
 
   // 쿠폰 훅 (쿠폰 목록만 사용)
   const { coupons } = useCoupons(addNotification);
@@ -51,7 +54,7 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
             products={products}
             filteredProducts={filteredProducts}
             debouncedSearchTerm={debouncedSearchTerm}
-            onAddToCart={handleAddToCart}
+            onAddToCart={addToCart}
             getRemainingStock={getRemainingStock}
             formatPrice={formatPrice}
           />
@@ -63,10 +66,10 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
             coupons={coupons}
             selectedCoupon={selectedCoupon}
             totals={totals}
-            onRemove={handleRemoveFromCart}
-            onUpdateQuantity={handleUpdateQuantity}
-            onApplyCoupon={handleApplyCoupon}
-            onCheckout={handleCheckout}
+            onRemove={removeFromCart}
+            onUpdateQuantity={updateQuantity}
+            onApplyCoupon={applyCoupon}
+            onCheckout={clearCart}
             calculateItemTotal={getItemTotal}
             calculateItemDiscountRate={getItemDiscountRate}
           />
@@ -75,4 +78,3 @@ export const CartPage: React.FC<CartPageProps> = ({ searchTerm }) => {
     </>
   );
 };
-
