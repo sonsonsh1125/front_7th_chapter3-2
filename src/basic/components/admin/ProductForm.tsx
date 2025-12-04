@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CloseIcon } from "../icons";
+import { useValidate } from "../../utils/hooks/useValidate";
 
 interface ProductFormData {
   name: string;
@@ -14,7 +15,10 @@ interface ProductFormProps {
   isEditing: boolean;
   onSubmit: (product: ProductFormData) => void;
   onCancel: () => void;
-  addNotification: (message: string, type: "error" | "success" | "warning") => void;
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
@@ -24,6 +28,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   onCancel,
   addNotification,
 }) => {
+  const { handleNumericInput, handlePriceBlur, handleStockBlur } =
+    useValidate(addNotification);
+
   const [formData, setFormData] = useState<ProductFormData>(
     product || {
       name: "",
@@ -87,23 +94,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               type="text"
               value={formData.price === 0 ? "" : formData.price}
               onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setFormData({
-                    ...formData,
-                    price: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const value = handleNumericInput(e.target.value);
+                setFormData({
+                  ...formData,
+                  price: value === "" ? 0 : parseInt(value),
+                });
               }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setFormData({ ...formData, price: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("가격은 0보다 커야 합니다", "error");
-                  setFormData({ ...formData, price: 0 });
-                }
-              }}
+              onBlur={(e) =>
+                handlePriceBlur(e.target.value, setFormData, "price")
+              }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
@@ -117,26 +116,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               type="text"
               value={formData.stock === 0 ? "" : formData.stock}
               onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setFormData({
-                    ...formData,
-                    stock: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const value = handleNumericInput(e.target.value);
+                setFormData({
+                  ...formData,
+                  stock: value === "" ? 0 : parseInt(value),
+                });
               }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                if (value === "") {
-                  setFormData({ ...formData, stock: 0 });
-                } else if (parseInt(value) < 0) {
-                  addNotification("재고는 0보다 커야 합니다", "error");
-                  setFormData({ ...formData, stock: 0 });
-                } else if (parseInt(value) > 9999) {
-                  addNotification("재고는 9999개를 초과할 수 없습니다", "error");
-                  setFormData({ ...formData, stock: 9999 });
-                }
-              }}
+              onBlur={(e) =>
+                handleStockBlur(e.target.value, setFormData, "stock")
+              }
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border"
               placeholder="숫자만 입력"
               required
@@ -158,7 +146,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   value={discount.quantity}
                   onChange={(e) => {
                     const newDiscounts = [...formData.discounts];
-                    newDiscounts[index].quantity = parseInt(e.target.value) || 0;
+                    newDiscounts[index].quantity =
+                      parseInt(e.target.value) || 0;
                     setFormData({
                       ...formData,
                       discounts: newDiscounts,
@@ -174,7 +163,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   value={discount.rate * 100}
                   onChange={(e) => {
                     const newDiscounts = [...formData.discounts];
-                    newDiscounts[index].rate = (parseInt(e.target.value) || 0) / 100;
+                    newDiscounts[index].rate =
+                      (parseInt(e.target.value) || 0) / 100;
                     setFormData({
                       ...formData,
                       discounts: newDiscounts,
@@ -208,7 +198,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               onClick={() => {
                 setFormData({
                   ...formData,
-                  discounts: [...formData.discounts, { quantity: 10, rate: 0.1 }],
+                  discounts: [
+                    ...formData.discounts,
+                    { quantity: 10, rate: 0.1 },
+                  ],
                 });
               }}
               className="text-sm text-indigo-600 hover:text-indigo-800"
@@ -239,4 +232,3 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 };
 
 export type { ProductFormData };
-

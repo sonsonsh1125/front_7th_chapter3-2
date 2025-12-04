@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Coupon } from "../../../types";
+import { useValidate } from "../../utils/hooks/useValidate";
 
 interface CouponFormProps {
   onSubmit: (coupon: Coupon) => void;
   onCancel: () => void;
-  addNotification: (message: string, type: "error" | "success" | "warning") => void;
+  addNotification: (
+    message: string,
+    type: "error" | "success" | "warning"
+  ) => void;
 }
 
 export const CouponForm: React.FC<CouponFormProps> = ({
@@ -12,6 +16,13 @@ export const CouponForm: React.FC<CouponFormProps> = ({
   onCancel,
   addNotification,
 }) => {
+  const {
+    handleNumericInput,
+    validateCouponCode,
+    validateDiscountRate,
+    validateDiscountAmount,
+  } = useValidate(addNotification);
+
   const [formData, setFormData] = useState<Coupon>({
     name: "",
     code: "",
@@ -21,6 +32,12 @@ export const CouponForm: React.FC<CouponFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 쿠폰 코드 검증
+    if (!validateCouponCode(formData.code)) {
+      return;
+    }
+
     onSubmit(formData);
     setFormData({
       name: "",
@@ -97,48 +114,26 @@ export const CouponForm: React.FC<CouponFormProps> = ({
               type="text"
               value={formData.discountValue === 0 ? "" : formData.discountValue}
               onChange={(e) => {
-                const value = e.target.value;
-                if (value === "" || /^\d+$/.test(value)) {
-                  setFormData({
-                    ...formData,
-                    discountValue: value === "" ? 0 : parseInt(value),
-                  });
-                }
+                const value = handleNumericInput(e.target.value);
+                setFormData({
+                  ...formData,
+                  discountValue: value === "" ? 0 : parseInt(value),
+                });
               }}
               onBlur={(e) => {
                 const value = parseInt(e.target.value) || 0;
                 if (formData.discountType === "percentage") {
-                  if (value > 100) {
-                    addNotification(
-                      "할인율은 100%를 초과할 수 없습니다",
-                      "error"
-                    );
-                    setFormData({
-                      ...formData,
-                      discountValue: 100,
-                    });
-                  } else if (value < 0) {
-                    setFormData({
-                      ...formData,
-                      discountValue: 0,
-                    });
-                  }
+                  const validatedValue = validateDiscountRate(value);
+                  setFormData({
+                    ...formData,
+                    discountValue: validatedValue,
+                  });
                 } else {
-                  if (value > 100000) {
-                    addNotification(
-                      "할인 금액은 100,000원을 초과할 수 없습니다",
-                      "error"
-                    );
-                    setFormData({
-                      ...formData,
-                      discountValue: 100000,
-                    });
-                  } else if (value < 0) {
-                    setFormData({
-                      ...formData,
-                      discountValue: 0,
-                    });
-                  }
+                  const validatedValue = validateDiscountAmount(value);
+                  setFormData({
+                    ...formData,
+                    discountValue: validatedValue,
+                  });
                 }
               }}
               className="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2 border text-sm"
@@ -166,4 +161,3 @@ export const CouponForm: React.FC<CouponFormProps> = ({
     </div>
   );
 };
-
