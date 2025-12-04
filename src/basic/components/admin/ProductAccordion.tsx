@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Product } from "../../../types";
+import { ChevronDownIcon } from "../icons";
 
 interface ProductWithUI extends Product {
   description?: string;
@@ -46,7 +47,9 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
                 onClick={() => toggleItem(product.id)}
                 className="flex items-center space-x-4 flex-1"
               >
-                <span className="font-medium text-gray-900">{product.name}</span>
+                <span className="font-medium text-gray-900">
+                  {product.name}
+                </span>
                 <span className="text-sm text-gray-500">
                   {formatPrice(product.price, product.id)}
                 </span>
@@ -61,21 +64,11 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
                 >
                   재고: {product.stock}개
                 </span>
-                <svg
+                <ChevronDownIcon
                   className={`w-5 h-5 text-gray-500 transition-transform ${
                     isOpen ? "transform rotate-180" : ""
                   }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                />
               </button>
 
               {/* 액션 버튼 (항상 표시) */}
@@ -106,7 +99,9 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">추천 상품</p>
+                    <p className="text-sm font-medium text-gray-500">
+                      추천 상품
+                    </p>
                     <p className="mt-1 text-sm text-gray-900">
                       {product.isRecommended ? "예" : "아니오"}
                     </p>
@@ -141,4 +136,3 @@ export const ProductAccordion: React.FC<ProductAccordionProps> = ({
 };
 
 export type { ProductWithUI };
-
